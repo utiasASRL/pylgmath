@@ -11,4 +11,15 @@ There are no minimal, constraint-free, singularity-free representations for thes
 This library uses concepts and mathematics described in Timothy D. Barfoot's book [State Estimation for Robotics](asrl.utias.utoronto.ca/~tdb/bib/barfoot_ser17.pdf).
 It is used for robotics research at the Autonomous Space Robotics Lab; most notably in the STEAM Engine, a library for Simultaneous Trajectory Estimation and Mapping.
 
+## Installation
+
+```bash
+## PyPI
+pip install asrl-pylgmath
+
+## Source
+git clone https://github.com/utiasASRL/pylgmath.git
+pip install -e pylgmath  # may need to replace `pip` with `pip3` if not using a virtual environment.
+```
+
 ## [License](./LICENSE)

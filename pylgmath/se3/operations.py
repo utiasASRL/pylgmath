@@ -67,17 +67,26 @@ def curlyhat(xi_or_rho, aaxis=None) -> np.ndarray:
   return x_curlyhat
 
 
-def Cr2T(C_ab, r_ba_ina):
+def Cr2T(*, C_ab=None, r_ba_ina=None, r_ab_inb=None):
+  assert C_ab is not None
+  assert (r_ba_ina is not None) or (r_ab_inb is not None)
   T_ab = np.tile(np.eye(4), (*C_ab.shape[:-2], 1, 1))
   T_ab[..., 0:3, 0:3] = C_ab
-  T_ab[..., 0:3, 3:4] = r_ba_ina
+  if r_ba_ina is not None:
+    T_ab[..., 0:3, 3:4] = r_ba_ina
+  else:
+    T_ab[..., 0:3, 3:4] = -C_ab @ r_ab_inb
   return T_ab
 
 
-def T2Cr(T_ab):
+def T2Cr(*, T_ab=None, return_r_ab_in_b=False):
+  assert T_ab is not None
   C_ab = T_ab[..., 0:3, 0:3]
   r_ba_ina = T_ab[..., 0:3, 3:4]
-  return C_ab, r_ba_ina
+  if return_r_ab_in_b:
+    return C_ab, -np.swapaxes(C_ab, -2, -1) @ r_ba_ina
+  else:
+    return C_ab, r_ba_ina
 
 
 def validate_tran(T):
@@ -158,7 +167,7 @@ def vec2tran(xi_ba: np.ndarray, num_terms: int = 0, return_T: bool = True) -> np
   """
   assert xi_ba.shape[-2:] == (6, 1)
   T_ab = _vec2tran_T_vec(xi_ba, num_terms)
-  return T_ab if return_T else T2Cr(T_ab)
+  return T_ab if return_T else T2Cr(T_ab=T_ab)
 
 
 def tran2vec(T_or_C_ab: np.ndarray, r_ba_ina: Optional[np.ndarray] = None) -> np.ndarray:
@@ -181,7 +190,7 @@ def tran2vec(T_or_C_ab: np.ndarray, r_ba_ina: Optional[np.ndarray] = None) -> np
   """
   if r_ba_ina is None:
     assert T_or_C_ab.shape[-2:] == (4, 4)
-    C_ab, r_ba_ina = T2Cr(T_or_C_ab)
+    C_ab, r_ba_ina = T2Cr(T_ab=T_or_C_ab)
   else:
     assert T_or_C_ab.shape[-2:] == (3, 3)
     assert r_ba_ina.shape[-2:] == (3, 1)
@@ -209,7 +218,7 @@ def tranAd(T_or_C_ab, r_ba_ina=None) -> np.ndarray:
     np.ndarray: the 6x6 adjoint transformation matrix
   """
   if r_ba_ina is None:
-    C_ab, r_ba_ina = T2Cr(T_or_C_ab)
+    C_ab, r_ba_ina = T2Cr(T_ab=T_or_C_ab)
   else:
     C_ab = T_or_C_ab
 

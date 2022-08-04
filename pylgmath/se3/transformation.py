@@ -51,7 +51,7 @@ class Transformation:
 
     # constructs using the exponential map from a 6x1 se3 algebra vector
     if xi_ab is not None:
-      assert xi_ab.shape[-2:] == (6, 1), "xi_ab has invalid shape."
+      assert xi_ab.shape[-2:] == (6, 1), f"xi_ab has invalid shape of {xi_ab.shape[-2:]}"
       self._C_ba, self._r_ab_inb = se3op.vec2tran(xi_ab, num_terms, False)
       return
 

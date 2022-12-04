@@ -127,7 +127,7 @@ def _rot2vec(C_ab):
 
   elif np.abs(phi_ba) > 1e-9:  # phi_ba is near [pi, 2*pi]
     eigval, eigvec = npla.eig(C_ab)
-    valid_eigval = np.abs(np.real(eigval) - 1) < 1e-10
+    valid_eigval = np.abs(np.real(eigval) - 1) < 1e-6
     valid_axis = np.real(eigvec[:, valid_eigval])
     axis = valid_axis[:, valid_axis.shape[1] - 1].reshape(3, 1)
     aaxis_ba = phi_ba * axis

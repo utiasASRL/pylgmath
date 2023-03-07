@@ -275,3 +275,50 @@ def vec2jacinv(aaxis_ba: np.ndarray, num_terms: int = 0) -> np.ndarray:
   """
   assert aaxis_ba.shape[-2:] == (3, 1)
   return _vec2jacinv_vec(aaxis_ba, num_terms)
+
+
+def _vec2N_analytical(aaxis_ba):
+  phi_ba = npla.norm(aaxis_ba, axis=-2, keepdims=True)
+  axis = aaxis_ba / phi_ba
+
+  buff_c = 2*(1.-np.cos(phi_ba))/phi_ba**2
+  buff_s = 2*(phi_ba-np.sin(phi_ba))/phi_ba**2
+
+  return buff_c * np.eye(3) + (1.-buff_c) * (axis @ np.swapaxes(axis, -1, -2)) + buff_s * hat(axis)
+
+def _vec2N_numerical(aaxis_ba, num_terms=0):
+  N_ab = np.tile(.5*np.eye(3), (*aaxis_ba.shape[:-2], 1, 1))
+
+  x_small = hat(aaxis_ba)
+  x_small_n = np.tile(.5*np.eye(3), (*aaxis_ba.shape[:-2], 1, 1))
+
+  for n in range(1, num_terms + 1):
+    x_small_n = x_small_n @ (x_small / (n + 2))
+    N_ab = N_ab + x_small_n
+
+  return 2*N_ab
+
+def _vec2N(aaxis_ba, num_terms=0):
+  tolerance = 1e-12
+  phi_ba = npla.norm(aaxis_ba, axis=-2)[0]
+  if (phi_ba < tolerance) or (num_terms != 0):
+    return _vec2N_numerical(aaxis_ba, num_terms)
+  else:
+    return _vec2N_analytical(aaxis_ba)
+
+
+_vec2N_vec = np.vectorize(_vec2N, signature='(3,1),()->(3,3)')
+
+def vec2N(aaxis_ba: np.ndarray, num_terms: int = 0) -> np.ndarray:
+  """Builds the 3x3 N matrix needed in the inertial navigation part of Barfoot's book
+
+  For more information see Barfoot's book.
+
+  Args:
+    aaxis_ba (np.ndarray): a 3x1 axis-angle vector
+    num_terms (int): number of terms used in the infinite series approximation
+  Returns:
+    np.ndarray: the 3x3 N matrix
+  """
+  assert aaxis_ba.shape[-2:] == (3, 1)
+  return _vec2N_vec(aaxis_ba, num_terms)

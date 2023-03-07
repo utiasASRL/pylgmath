@@ -305,6 +305,8 @@ def _vec2jac_numerical(rho_ba, aaxis_ba, num_terms):
 def _vec2jac_rho_aaxis(rho_ba, aaxis_ba, num_terms=0):
   tolerance = 1e-12
   if (npla.norm(aaxis_ba, axis=-2)[0] < tolerance) or (num_terms != 0):
+    if num_terms==0: #if aaxis is null, the matrix is nilpotent
+        num_terms=1
     return _vec2jac_numerical(rho_ba, aaxis_ba, num_terms)
   else:
     return _vec2jac_analytical(rho_ba, aaxis_ba)
@@ -376,6 +378,8 @@ def _vec2jacinv_numerical(rho_ba, aaxis_ba, num_terms):
 def _vec2jacinv_rho_aaxis(rho_ba, aaxis_ba, num_terms=0):
   tolerance = 1e-12
   if (npla.norm(aaxis_ba, axis=-2)[0] < tolerance) or (num_terms != 0):
+    if num_terms==0: #if aaxis is null, the matrix is nilpotent
+        num_terms=1
     return _vec2jacinv_numerical(rho_ba, aaxis_ba, num_terms)
   else:
     return _vec2jacinv_analytical(rho_ba, aaxis_ba)

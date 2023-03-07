@@ -32,6 +32,7 @@ def test_vec2tran_tran2vec_special_cases():
 
   test_vecs = np.expand_dims(np.array([
       [0, 0, 0, 0, 0, 0],
+      [1, 1, 1, 0, 0, 0],
       [0, 0, 0, np.pi, 0, 0],
       [0, 0, 0, 0, np.pi, 0],
       [0, 0, 0, 0, 0, np.pi],
@@ -71,6 +72,7 @@ def test_vec2jac_vec2jacinv_special_cases():
 
   test_vecs = np.expand_dims(np.array([
       [0, 0, 0, 0, 0, 0],
+      [1, 1, 1, 0, 0, 0],
       [0, 0, 0, np.pi, 0, 0],
       [0, 0, 0, 0, np.pi, 0],
       [0, 0, 0, 0, 0, np.pi],

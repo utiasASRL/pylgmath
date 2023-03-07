@@ -97,3 +97,30 @@ def test_vec2jac_vec2jacinv_special_cases():
   # numerical vs analytical
   assert np.allclose(jac, jac_numerical, atol=1e-6)
   assert np.allclose(jacinv, jacinv_numerical, atol=1e-6)
+
+def test_vec2N():
+
+  test_vecs = np.random.uniform(-np.pi / 2, np.pi / 2, size=(TEST_SIZE, 3, 1))
+
+  N = so3op.vec2N(test_vecs)
+  N_numerical = so3op.vec2N(test_vecs, 20)
+
+  assert np.allclose(N, N_numerical, atol=1e-6)
+
+def test_vec2N_special_cases():
+
+  test_vecs = np.expand_dims(np.array([
+      [0, 0, 0],
+      [np.pi, 0, 0],
+      [0, np.pi, 0],
+      [0, 0, np.pi],
+      [np.pi / 2, 0, 0],
+      [0, np.pi / 2, 0],
+      [0, 0, np.pi / 2],
+  ]),
+                             axis=-1)
+
+  N = so3op.vec2jac(test_vecs)
+  N_numerical = so3op.vec2jac(test_vecs, 20)
+
+  assert np.allclose(N, N_numerical, atol=1e-6)

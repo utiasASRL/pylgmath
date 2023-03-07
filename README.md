@@ -22,4 +22,11 @@ git clone https://github.com/utiasASRL/pylgmath.git
 pip install -e pylgmath  # may need to replace `pip` with `pip3` if not using a virtual environment.
 ```
 
+## Unit tests
+Use [pytest](https://docs.pytest.org) to run the unit tests:
+```bash
+pytest ./tests
+```
+
+
 ## [License](./LICENSE)

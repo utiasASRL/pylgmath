@@ -130,16 +130,11 @@ class Transformation:
     """Reprojects the transformation matrix back onto SE(3)."""
     self._C_ba = so3op.vec2rot(so3op.rot2vec(self._C_ba))
 
-  def __matmul__(self, other):
-    return self.__mul__(other)
+  def __matmul__(self, other) -> Transformation:
+    return Transformation(T_ba=self.matrix() @ other.matrix())
 
   def __mul__(self, other) -> Transformation:
-    if isinstance(other, Transformation):
-      return Transformation(T_ba=self.matrix() @ other.matrix())
-    elif other.shape == (4,1): # Mult by Homogeneous vector
-      return self.matrix() @ other
-    else:
-      raise TypeError("Object multiplication invalid.")
+    return Transformation(T_ba=self.matrix() @ other.matrix())
 
   def __str__(self):
     return str(self.matrix())
